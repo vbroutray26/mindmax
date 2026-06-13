@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bernard/VB</string>
+    <string name="app_tagline">Think better. Decide well.</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_library">Library</string>
+    <string name="nav_learn">Learn</string>
+    <string name="nav_journal">Journal</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home -->
+    <string name="home_input_placeholder">Describe your situation…</string>
+    <string name="home_recent_analyses">Recent Analyses</string>
+    <string name="home_analyse_button">Analyse</string>
+
+    <!-- Analysis -->
+    <string name="analysis_primary_model">Primary Model</string>
+    <string name="analysis_also_consider">Also Consider</string>
+    <string name="analysis_blind_spot">Blind Spot Detected</string>
+    <string name="analysis_see_paths">See 3 Decision Paths →</string>
+    <string name="analysis_thinking">Thinking through your situation…</string>
+
+    <!-- Library -->
+    <string name="library_search_hint">Search 250+ mental models…</string>
+    <string name="library_all_domains">All</string>
+    <string name="library_locked_model">Pro — unlock this model</string>
+
+    <!-- Paywall -->
+    <string name="paywall_title">Upgrade to Bernard/VB Pro</string>
+    <string name="paywall_monthly">₹499/month</string>
+    <string name="paywall_annual">₹3,999/year · Save 33%</string>
+    <string name="paywall_dismiss">Maybe later</string>
+    <string name="paywall_cta">Start 7-Day Free Trial</string>
+
+    <!-- Errors -->
+    <string name="error_analysis_failed">Analysis failed. Please try again.</string>
+    <string name="error_usage_limit">You\'ve used your 5 free analyses this month.</string>
+    <string name="error_network">No internet connection.</string>
+</resources>

@@ -1,0 +1,25 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+google-services.json
+*.keystore
+*.jks
+
+# Middleware
+middleware/node_modules/
+middleware/.env
+middleware/dist/
+middleware/*.log
+
+# Generated
+app/src/main/assets/
+
+# OS
+Thumbs.db

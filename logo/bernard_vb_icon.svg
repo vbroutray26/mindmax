@@ -1,0 +1,46 @@
+<!--
+  Bernard/VB — App Icon
+  Square format, 512×512. Geometric path-based B letterform with blue slash.
+  Safe for use as Android adaptive icon foreground layer.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Bernard/VB icon">
+
+  <!-- Background: Ink -->
+  <rect width="512" height="512" fill="#0D0D0F" rx="80"/>
+
+  <!-- Geometric B — built from paths, no font dependency -->
+  <!-- Outer B silhouette using evenodd fill rule -->
+  <path
+    fill="#F7F5F0"
+    fill-rule="evenodd"
+    d="
+      M 120 100
+      L 120 412
+      L 272 412
+      C 340 412 380 374 380 316
+      C 380 282 362 256 334 242
+      C 356 228 370 204 370 172
+      C 370 128 336 100 272 100
+      Z
+      M 178 166
+      L 262 166
+      C 300 166 314 182 314 206
+      C 314 230 300 248 262 248
+      L 178 248
+      Z
+      M 178 310
+      L 270 310
+      C 314 310 322 332 322 350
+      C 322 372 308 346 270 346
+      L 178 346
+      Z
+    "
+  />
+
+  <!-- Blue slash accent — thin parallelogram -->
+  <polygon
+    fill="#2A5CFF"
+    points="310,100 346,100 202,412 166,412"
+    opacity="0.92"
+  />
+</svg>

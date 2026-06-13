@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" width="480" height="120" role="img" aria-label="Bernard/VB logo — dark">
+  <rect width="480" height="120" fill="#0D0D0F"/>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=JetBrains+Mono:wght@400&amp;display=swap');
+      .wordmark { font-family: 'DM Serif Display', 'Georgia', serif; }
+      .mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+    </style>
+  </defs>
+
+  <text class="wordmark" x="16" y="80" font-size="72" fill="#F7F5F0" letter-spacing="-2">BERNARD</text>
+  <line x1="16" y1="90" x2="462" y2="90" stroke="#F7F5F0" stroke-width="0.75" opacity="0.2"/>
+  <text class="mono" x="18" y="112" font-size="13" fill="#2A5CFF" letter-spacing="5">/VB</text>
+</svg>
