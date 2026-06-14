@@ -6,6 +6,8 @@ import com.bernardvb.domain.model.ThinkerLevel
 import com.bernardvb.domain.model.UserProgress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.json.JSONArray
+import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -48,7 +50,19 @@ class UserProgressRepositoryImpl @Inject constructor(
             decisionAccuracyScore = decisionAccuracyScore,
             badges = emptyList(),
             goalsSelected = emptyList(),
+            domainBreakdown = parseDomainBreakdown(domainBreakdown),
+            topModels = parseJsonStringList(topModels),
             updatedAt = updatedAt
         )
     }
+
+    private fun parseDomainBreakdown(json: String): Map<String, Int> = try {
+        val obj = JSONObject(json)
+        obj.keys().asSequence().associateWith { obj.getInt(it) }
+    } catch (_: Exception) { emptyMap() }
+
+    private fun parseJsonStringList(json: String): List<String> = try {
+        val arr = JSONArray(json)
+        (0 until arr.length()).map { arr.getString(it) }
+    } catch (_: Exception) { emptyList() }
 }

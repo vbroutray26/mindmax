@@ -4,5 +4,38 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <path android:fillColor="#FF6B6B72" android:pathData="M12,12m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0"/>
+  <!-- Notebook -->
+  <path
+      android:fillColor="@android:color/transparent"
+      android:strokeColor="#FF6B6B72"
+      android:strokeWidth="1.8"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"
+      android:pathData="M6,3 L18,3 Q19,3 19,4 L19,20 Q19,21 18,21 L6,21 Q5,21 5,20 L5,4 Q5,3 6,3 Z"/>
+  <!-- Spine -->
+  <path
+      android:fillColor="@android:color/transparent"
+      android:strokeColor="#FF6B6B72"
+      android:strokeWidth="1.8"
+      android:strokeLineCap="round"
+      android:pathData="M9,3 L9,21"/>
+  <!-- Lines -->
+  <path
+      android:fillColor="@android:color/transparent"
+      android:strokeColor="#FF6B6B72"
+      android:strokeWidth="1.5"
+      android:strokeLineCap="round"
+      android:pathData="M12,8 L17,8"/>
+  <path
+      android:fillColor="@android:color/transparent"
+      android:strokeColor="#FF6B6B72"
+      android:strokeWidth="1.5"
+      android:strokeLineCap="round"
+      android:pathData="M12,12 L17,12"/>
+  <path
+      android:fillColor="@android:color/transparent"
+      android:strokeColor="#FF6B6B72"
+      android:strokeWidth="1.5"
+      android:strokeLineCap="round"
+      android:pathData="M12,16 L15,16"/>
 </vector>

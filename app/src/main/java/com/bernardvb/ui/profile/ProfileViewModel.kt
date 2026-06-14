@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bernardvb.data.repository.UserProgressRepository
 import com.bernardvb.domain.model.ThinkerLevel
+import com.bernardvb.domain.model.UserProgress
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -23,6 +24,10 @@ class ProfileViewModel @Inject constructor(
     private val userProgressRepository: UserProgressRepository,
     private val auth: FirebaseAuth
 ) : ViewModel() {
+
+    val progress: StateFlow<UserProgress?> = userProgressRepository
+        .getProgress(auth.currentUser?.uid ?: "")
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val uiState: StateFlow<ProfileUiState> = userProgressRepository
         .getProgress(auth.currentUser?.uid ?: "")

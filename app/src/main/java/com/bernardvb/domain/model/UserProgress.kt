@@ -15,6 +15,8 @@ data class UserProgress(
     val decisionAccuracyScore: Float?,
     val badges: List<String>,
     val goalsSelected: List<String>,
+    val domainBreakdown: Map<String, Int> = emptyMap(),
+    val topModels: List<String> = emptyList(),
     val updatedAt: Long
 )
 

@@ -17,7 +17,9 @@ data class UserProgressEntity(
     val totalJournalEntries: Int = 0,
     val totalChallengesCompleted: Int = 0,
     val decisionAccuracyScore: Float? = null,
-    val badges: String = "[]",        // JSON array
-    val goalsSelected: String = "[]", // JSON array
+    val badges: String = "[]",          // JSON array
+    val goalsSelected: String = "[]",   // JSON array
+    val domainBreakdown: String = "{}",  // JSON object {domainId: count}
+    val topModels: String = "[]",        // JSON array of model ids
     val updatedAt: Long = System.currentTimeMillis()
 )
