@@ -51,10 +51,42 @@ fun SituationInputScreen(
     val wordCount = textValue.text.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }.size
     val isAnalyseEnabled = wordCount >= MIN_WORDS && textValue.text.length <= MAX_CHARS
 
+    val speechRecognizer = remember { SpeechRecognizer.createSpeechRecognizer(context) }
+
+    DisposableEffect(Unit) {
+        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) { }
+            override fun onBeginningOfSpeech() { }
+            override fun onRmsChanged(rmsdB: Float) { }
+            override fun onBufferReceived(buffer: ByteArray?) { }
+            override fun onEndOfSpeech() { isRecording = false }
+            override fun onError(error: Int) { isRecording = false }
+            override fun onResults(results: Bundle?) {
+                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                val spoken = matches?.firstOrNull() ?: return
+                val appended = if (textValue.text.isNotEmpty()) "${textValue.text} $spoken" else spoken
+                textValue = TextFieldValue(appended.take(MAX_CHARS))
+                isRecording = false
+            }
+            override fun onPartialResults(partialResults: Bundle?) { }
+            override fun onEvent(eventType: Int, params: Bundle?) { }
+        })
+        onDispose { speechRecognizer.destroy() }
+    }
+
+    fun startListening() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false)
+        }
+        speechRecognizer.startListening(intent)
+        isRecording = true
+    }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) isRecording = true
+        if (granted) startListening()
     }
 
     LaunchedEffect(analysisState) {
@@ -76,7 +108,12 @@ fun SituationInputScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                        if (isRecording) {
+                            speechRecognizer.stopListening()
+                            isRecording = false
+                        } else {
+                            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                        }
                     }) {
                         Icon(
                             if (isRecording) Icons.Default.MicOff else Icons.Default.Mic,

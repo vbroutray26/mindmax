@@ -10,10 +10,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.bernardvb.ui.auth.AuthViewModel
+import com.bernardvb.ui.auth.LoginScreen
 import com.bernardvb.ui.navigation.BernardVBNavGraph
 import com.bernardvb.ui.navigation.Screen
+import com.bernardvb.ui.theme.BernardType
 import com.bernardvb.ui.theme.BernardVBTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,6 +39,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun BernardVBApp() {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    var isAuthenticated by remember { mutableStateOf(authViewModel.isLoggedIn) }
+
+    if (!isAuthenticated) {
+        LoginScreen(onAuthSuccess = { isAuthenticated = true })
+        return
+    }
+
     val navController = rememberNavController()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentEntry?.destination?.route
@@ -65,7 +77,7 @@ private fun BernardVBApp() {
                                     contentDescription = screen.label
                                 )
                             },
-                            label = { Text(screen.label, style = com.bernardvb.ui.theme.BernardType.LabelSmall) }
+                            label = { Text(screen.label, style = BernardType.LabelSmall) }
                         )
                     }
                 }

@@ -24,7 +24,7 @@ fun DrillDownScreen(
     onModelClick: (String) -> Unit,
     viewModel: AnalysisViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.analysisState.collectAsState()
 
     LaunchedEffect(analysisId) {
         viewModel.loadAnalysis(analysisId)
@@ -43,7 +43,7 @@ fun DrillDownScreen(
         }
     ) { padding ->
         when (val s = state) {
-            is AnalysisState.Success -> {
+            is AnalysisViewModel.AnalysisState.Success -> {
                 val analysis = s.analysis
                 LazyColumn(
                     contentPadding = PaddingValues(
@@ -63,20 +63,20 @@ fun DrillDownScreen(
                     analysis.deepSynthesis?.let { synthesis ->
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text("HOW IT APPLIES", style = BernardType.LabelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(synthesis.synthesis, style = BernardType.BodyLarge, color = MaterialTheme.colorScheme.onBackground)
+                                Text("CONVERGENCE", style = BernardType.LabelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(synthesis.convergence, style = BernardType.BodyLarge, color = MaterialTheme.colorScheme.onBackground)
                             }
                         }
 
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text("KEY INSIGHT", style = BernardType.LabelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("TENSION", style = BernardType.LabelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Card(
                                     colors = CardDefaults.cardColors(containerColor = BernardColors.AccentBlue.copy(alpha = 0.1f)),
                                     shape = MaterialTheme.shapes.medium
                                 ) {
                                     Text(
-                                        synthesis.keyInsight,
+                                        synthesis.tension,
                                         style = BernardType.BodyLarge,
                                         color = BernardColors.AccentBlue,
                                         modifier = Modifier.padding(16.dp)
@@ -87,7 +87,7 @@ fun DrillDownScreen(
 
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text("NEXT ACTION", style = BernardType.LabelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("RECOMMENDATION", style = BernardType.LabelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Surface(
                                     shape = MaterialTheme.shapes.medium,
                                     color = MaterialTheme.colorScheme.surfaceVariant
@@ -98,7 +98,7 @@ fun DrillDownScreen(
                                         verticalAlignment = Alignment.Top
                                     ) {
                                         Text("→", style = BernardType.DisplaySmall, color = BernardColors.AccentBlue)
-                                        Text(synthesis.actionableStep, style = BernardType.BodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text(synthesis.recommendation, style = BernardType.BodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
                             }
@@ -133,7 +133,7 @@ fun DrillDownScreen(
                 }
             }
 
-            is AnalysisState.Loading -> {
+            is AnalysisViewModel.AnalysisState.Loading -> {
                 Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = BernardColors.AccentBlue)
                 }

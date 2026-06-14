@@ -11,6 +11,7 @@ import com.bernardvb.domain.model.enums.UrgencyContext
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,8 +25,9 @@ class AnalysisRepositoryImpl @Inject constructor(
 ) : AnalysisRepository {
 
     override fun getRecentAnalyses(userId: String, limit: Int): Flow<List<Analysis>> =
-        dao.getRecentAnalyses(userId, limit).map { entities ->
-            entities.mapNotNull { it.toDomain() }
+        dao.getRecentAnalyses(userId, limit).transform { entities ->
+            val mapped = entities.mapNotNull { it.toDomain() }
+            emit(mapped)
         }
 
     override suspend fun analysesSituation(
@@ -127,5 +129,76 @@ class AnalysisRepositoryImpl @Inject constructor(
     private fun DecisionPath.toJson(): String =
         """{"title":"$title","description":"${description.replace("\"","\\\"")}","modelJustification":"$modelJustification","riskLevel":"${riskLevel.name.lowercase()}","rewardLevel":"${rewardLevel.name.lowercase()}"}"""
 
-    private fun AnalysisEntity.toDomain(): Analysis? = null // Full mapping requires model lookup — done via ViewModel
+    private suspend fun AnalysisEntity.toDomain(): Analysis? {
+        val primary = modelRepository.getModelById(primaryModelId) ?: return null
+        val secondaryIds = parseJsonStrings(secondaryModelIds)
+        val secondaryReasonsList = parseJsonStrings(secondaryReasons)
+        val secondaryModels = secondaryIds.mapIndexedNotNull { i, id ->
+            modelRepository.getModelById(id)?.let { model ->
+                SecondaryModel(model, secondaryReasonsList.getOrElse(i) { "" })
+            }
+        }
+        val blindSpot = blindSpotModelId?.let { id ->
+            modelRepository.getModelById(id)?.let { model ->
+                BlindSpot(model, blindSpotText ?: "")
+            }
+        }
+        return Analysis(
+            id = id,
+            situationText = situationText,
+            moodContext = moodContext?.let { m ->
+                MoodContext.entries.firstOrNull { it.name.lowercase() == m }
+            },
+            urgencyContext = urgencyContext?.let { u ->
+                UrgencyContext.entries.firstOrNull { it.name.lowercase() == u }
+            },
+            primaryModel = ModelApplication(primary, primaryContextApplication),
+            secondaryModels = secondaryModels,
+            blindSpot = blindSpot,
+            decisionPaths = DecisionPaths(
+                conservative = parsePathJson(conservativePath, PathType.CONSERVATIVE),
+                balanced = parsePathJson(balancedPath, PathType.BALANCED),
+                bold = parsePathJson(boldPath, PathType.BOLD)
+            ),
+            deepSynthesis = deepSynthesis?.let { parseDeepSynthesisJson(it) },
+            isDeepAnalysis = isDeepAnalysis,
+            xpEarned = xpEarned,
+            usageRemaining = null,
+            createdAt = createdAt
+        )
+    }
+
+    private fun parseJsonStrings(json: String): List<String> = try {
+        val arr = org.json.JSONArray(json)
+        (0 until arr.length()).map { arr.getString(it) }
+    } catch (_: Exception) { emptyList() }
+
+    private fun parsePathJson(json: String, type: PathType): DecisionPath = try {
+        val obj = org.json.JSONObject(json)
+        DecisionPath(
+            type = type,
+            title = obj.optString("title"),
+            description = obj.optString("description"),
+            modelJustification = obj.optString("modelJustification"),
+            riskLevel = DecisionPath.RiskLevel.entries.firstOrNull {
+                it.name.lowercase() == obj.optString("riskLevel")
+            } ?: DecisionPath.RiskLevel.MEDIUM,
+            rewardLevel = DecisionPath.RewardLevel.entries.firstOrNull {
+                it.name.lowercase() == obj.optString("rewardLevel")
+            } ?: DecisionPath.RewardLevel.MEDIUM
+        )
+    } catch (_: Exception) {
+        DecisionPath(type = type, title = "", description = "", modelJustification = "",
+            riskLevel = DecisionPath.RiskLevel.MEDIUM, rewardLevel = DecisionPath.RewardLevel.MEDIUM)
+    }
+
+    private fun parseDeepSynthesisJson(json: String): DeepSynthesis? = try {
+        val obj = org.json.JSONObject(json)
+        DeepSynthesis(
+            convergence = obj.optString("convergence"),
+            tension = obj.optString("tension"),
+            recommendation = obj.optString("recommendation"),
+            overlookedModel = obj.optString("overlookedModel")
+        )
+    } catch (_: Exception) { null }
 }
