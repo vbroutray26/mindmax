@@ -18,8 +18,6 @@ middleware/.env
 middleware/dist/
 middleware/*.log
 
-# Generated
-app/src/main/assets/
 
 # OS
 Thumbs.db
