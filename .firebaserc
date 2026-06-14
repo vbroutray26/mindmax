@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "bernardvb-dev",
+    "production": "REPLACE_WITH_PROD_PROJECT_ID"
+  }
+}
