@@ -10,11 +10,19 @@ declare global {
   }
 }
 
-// Initialise Firebase Admin once
+// Initialise Firebase Admin once.
+// In production (Render/Railway) pass the service account as a base64 string:
+//   FIREBASE_SERVICE_ACCOUNT_B64=$(base64 -i service-account.json | tr -d '\n')
+// In local dev, set GOOGLE_APPLICATION_CREDENTIALS to the file path instead.
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_B64) {
+    const serviceAccount = JSON.parse(
+      Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_B64, 'base64').toString('utf8')
+    );
+    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+  } else {
+    admin.initializeApp({ credential: admin.credential.applicationDefault() });
+  }
 }
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,18 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+}
+
+// Read local.properties for machine-specific overrides (gitignored)
+val localProps = Properties().also { props ->
+    val f = rootProject.file("local.properties")
+    if (f.exists()) props.load(f.inputStream())
+}
+
+// Read keystore.properties for release signing (gitignored)
+val keystoreProps = Properties().also { props ->
+    val f = rootProject.file("app/keystore.properties")
+    if (f.exists()) props.load(f.inputStream())
 }
 
 android {
@@ -20,12 +34,23 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-        buildConfigField("String", "API_BASE_URL", "\"https://api.bernardvb.app/v1\"")
-        buildConfigField("String", "API_BASE_URL_DEBUG", "\"https://api-dev.bernardvb.app/v1\"")
+    signingConfigs {
+        create("release") {
+            if (keystoreProps.isNotEmpty()) {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
+        val prodUrl = localProps.getProperty("API_BASE_URL") ?: "https://api.bernardvb.app/v1"
+        val devUrl  = localProps.getProperty("API_BASE_URL_DEBUG") ?: "https://api-dev.bernardvb.app/v1"
+
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -33,12 +58,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_BASE_URL", "\"https://api.bernardvb.app/v1\"")
+            if (keystoreProps.isNotEmpty()) signingConfig = signingConfigs.getByName("release")
+            buildConfigField("String", "API_BASE_URL", "\"${prodUrl}\"")
         }
         debug {
             applicationIdSuffix = ".debug"
             isDebuggable = true
-            buildConfigField("String", "API_BASE_URL", "\"https://api-dev.bernardvb.app/v1\"")
+            buildConfigField("String", "API_BASE_URL", "\"${devUrl}\"")
         }
     }
 

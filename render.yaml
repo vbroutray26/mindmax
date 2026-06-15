@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: bernardvb-middleware
+    env: node
+    # Free tier spins down after inactivity — use "starter" for a production app
+    plan: starter
+    region: frankfurt
+    buildCommand: cd middleware && npm ci && npm run build
+    startCommand: cd middleware && node dist/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FREE_TIER_MONTHLY_LIMIT
+        value: 5
+      # Set these in the Render dashboard — never commit values
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      # Base64-encoded Firebase service account JSON.
+      # Generate: base64 -i service-account.json | tr -d '\n'
+      # Then paste the output as the value in the Render dashboard.
+      - key: FIREBASE_SERVICE_ACCOUNT_B64
+        sync: false
